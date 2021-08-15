@@ -6,6 +6,8 @@ authors = ["tianru zhou <tianr.zhou@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
+plotly = "^5.1.0"
+pyrh = "^2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
