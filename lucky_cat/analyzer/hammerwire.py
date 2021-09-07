@@ -3,7 +3,8 @@ from yfinance import Ticker
 
 import plotly.graph_objects as go
 
-from lucky_cat.common.utils.helper import isMonotonic, isMonotonicApproximate
+from lucky_cat.common.utils.helper import isMonotonic, isMonotonicApproximate, isMonotonicInc, \
+    isMonotonicIncApproximate, isMonotonicDec, isMonotonicDecApproximate
 
 
 class HammerWire:
@@ -15,6 +16,86 @@ class HammerWire:
         # condition 3: (high - min(open, close)) / (high - low) < top_ratio
         self.top_ratio = top_ratio
         # condition 4: must be monotonically increasing / decreasing
+
+    def is_up_hammer_wire(self, history: DataFrame) -> bool:
+        latest = history.iloc[-1]
+        open = latest['Open']
+        close = latest['Close']
+        high = latest['High']
+        low = latest['Low']
+
+        day_range = max(abs(high - low), 0.01)
+        oc_range = max(abs(open - close), 0.01)
+
+        # meet condition 1
+        if oc_range / day_range > self.value_ratio:
+            return False
+        # meet condition 2
+        pos = min(open, close)
+        if abs(pos - low) / oc_range < self.bot_ratio:
+            return False
+        # meet condition 3
+        if (high - pos) / day_range > self.top_ratio:
+            return False
+
+        # meet condition 4
+        # TODO(tianru): revisit algorithm
+        # currently, only use close market price within 4 days (maybe open market price is better since we can trade???)
+        close_market_prices = []
+        trend_df = history.tail(4)
+        for index, row in trend_df.iterrows():
+            close_market_prices.append(row['Close'])
+
+        ltrend_df = history.tail(5)
+        lclose_market_prices = []
+        for index, row in ltrend_df.iterrows():
+            lclose_market_prices.append(row['Close'])
+
+        if not isMonotonicInc(close_market_prices):
+            if not isMonotonicIncApproximate(lclose_market_prices):
+                return False
+
+        return True
+
+    def is_down_hammer_wire(self, history: DataFrame) -> bool:
+        latest = history.iloc[-1]
+        open = latest['Open']
+        close = latest['Close']
+        high = latest['High']
+        low = latest['Low']
+
+        day_range = max(abs(high - low), 0.01)
+        oc_range = max(abs(open - close), 0.01)
+
+        # meet condition 1
+        if oc_range / day_range > self.value_ratio:
+            return False
+        # meet condition 2
+        pos = min(open, close)
+        if abs(pos - low) / oc_range < self.bot_ratio:
+            return False
+        # meet condition 3
+        if (high - pos) / day_range > self.top_ratio:
+            return False
+
+        # meet condition 4
+        # TODO(tianru): revisit algorithm
+        # currently, only use close market price within 4 days (maybe open market price is better since we can trade???)
+        close_market_prices = []
+        trend_df = history.tail(4)
+        for index, row in trend_df.iterrows():
+            close_market_prices.append(row['Close'])
+
+        ltrend_df = history.tail(5)
+        lclose_market_prices = []
+        for index, row in ltrend_df.iterrows():
+            lclose_market_prices.append(row['Close'])
+
+        if not isMonotonicDec(close_market_prices):
+            if not isMonotonicDecApproximate(lclose_market_prices):
+                return False
+
+        return True
 
     def is_hammer_wire(self, history: DataFrame) -> bool:
         # history = ticker.history(period='30d')

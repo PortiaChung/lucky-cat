@@ -1,54 +1,111 @@
 import yfinance as yf
+from pandas import DataFrame
+
 from common.candlestick.candlestick import CandleStick
 import plotly.graph_objects as go
 
 import pandas as pd
 import datetime
 
-
 from lucky_cat.analyzer.hammerwire import HammerWire
+from lucky_cat.analyzer.swallow import Swallow
+from lucky_cat.analyzer.swallowext import SwallowExt
 from lucky_cat.common.utils.helper import isMonotonic, isMonotonicApproximate
 from lucky_cat.news.popular.popular import Popular
 
 
-def main():
-    # rh_pop_list = Popular.get_robinhood_populars()
-    # # rh_pop_list = ['BABA', 'XPEV', 'PLTR']
-    #
-    # hammerwire = HammerWire(1 / 5, 3, 1 / 3)
-    # for pop in rh_pop_list:
-    #     ticker = yf.Ticker(pop)
-    #     if hammerwire.is_hammer_wire(ticker.history()):
-    #         print(pop)
+def plot(history: DataFrame):
+    fig = go.Figure(
+        data=[
+            go.Candlestick(
+                x=history.index,
+                open=history['Open'],
+                high=history['High'],
+                low=history['Low'],
+                close=history['Close']
+            )
+        ]
+    )
+    fig.show()
 
-    # do history stats analysis
+def find_hammer_wire(rh_pop_list):
+    print("######## Hammer Wire ########")
     hammerwire = HammerWire(1 / 5, 3, 1 / 3)
-    # candidates = ['UBER', 'TSLA', 'COIN', 'NIO', 'F', 'BABA', 'XPEV', 'NOK', 'DIS', 'PFE']
-    candidates = ['UPST']
-    for candidate in candidates:
-        ticker = yf.Ticker(candidate)
-        shape = ticker.history('1y').shape
-        print("candidate: {}, shape is: {}".format(candidate, shape))
-        for i in range(0, shape[0] - 7):
-            # print("iterate: {}".format(i))
-            history = ticker.history(period='{}'.format('1y')).iloc[0:shape[0] - i]
-            if hammerwire.is_hammer_wire(history):
-                print(history.tail(1).index)
-                history = ticker.history(period='{}'.format('1y')).iloc[max(shape[0] - i - 15, 0) : shape[0] - i + 15]
-                fig = go.Figure(
-                    data=[
-                        go.Candlestick(
-                            x=history.index,
-                            open=history['Open'],
-                            high=history['High'],
-                            low=history['Low'],
-                            close=history['Close']
-                        )
-                    ]
-                )
-                fig.show()
+    for pop in rh_pop_list:
+        try:
+            ticker = yf.Ticker(pop)
+            history = ticker.history()
+            if hammerwire.is_up_hammer_wire(history) or hammerwire.is_down_hammer_wire(history):
+                print(pop)
+                # history = ticker.history()
+                plot(history)
+        except Exception as ex:
+            print("Hammer wire, ticker: {}, exception: {}".format(pop, ex))
+
+def find_swallow(rh_pop_list):
+    print("######## Swallow ########")
+    swallow = Swallow(4)
+    # rh_pop_list = ['MRNA']
+    for pop in rh_pop_list:
+        try:
+            ticker = yf.Ticker(pop)
+            # print(pop)
+            history = ticker.history()
+            if swallow.is_up_swallow(history) or swallow.is_down_swallow(history):
+                print(pop)
+                plot(history=history)
+        except Exception as ex:
+            print("Swallow, ticker: {}, exception: {}".format(pop, ex))
+
+def find_swallow_ext(rh_pop_list):
+    print("######## Swallow Ext ########")
+    swallowext = SwallowExt(4, 1 / 2)
+    # rh_pop_list = ['FB']
+    for pop in rh_pop_list:
+        try:
+            ticker = yf.Ticker(pop)
+            history = ticker.history()
+            # print(pop)
+            if swallowext.is_up_swallowext(history) or swallowext.is_down_swallowext(history):
+                plot(history)
+                print(pop)
+        except Exception as ex:
+            print("Swallow Ext, ticker: {}, exception: {}".format(pop, ex))
 
 
+def main():
+    rh_pop_list = Popular.get_robinhood_populars()
+
+    find_hammer_wire(rh_pop_list)
+    find_swallow(rh_pop_list)
+    find_swallow_ext(rh_pop_list)
+
+    # # do history stats analysis
+    # hammerwire = HammerWire(1 / 5, 3, 1 / 3)
+    # # candidates = ['UBER', 'TSLA', 'COIN', 'NIO', 'F', 'BABA', 'XPEV', 'NOK', 'DIS', 'PFE']
+    # candidates = ['XPEV']
+    # for candidate in candidates:
+    #     ticker = yf.Ticker(candidate)
+    #     shape = ticker.history('1y').shape
+    #     print("candidate: {}, shape is: {}".format(candidate, shape))
+    #     for i in range(0, shape[0] - 7):
+    #         # print("iterate: {}".format(i))
+    #         history = ticker.history(period='{}'.format('1y')).iloc[0:shape[0] - i]
+    #         if hammerwire.is_hammer_wire(history):
+    #             print(history.tail(1).index)
+    #             history = ticker.history(period='{}'.format('1y')).iloc[max(shape[0] - i - 15, 0) : shape[0] - i + 15]
+    #             fig = go.Figure(
+    #                 data=[
+    #                     go.Candlestick(
+    #                         x=history.index,
+    #                         open=history['Open'],
+    #                         high=history['High'],
+    #                         low=history['Low'],
+    #                         close=history['Close']
+    #                     )
+    #                 ]
+    #             )
+    #             fig.show()
 
     # ticker = yf.Ticker('SNOW')
     # print(ticker.info)
@@ -60,8 +117,6 @@ def main():
     #     print("open: {}, close: {}".format(row['Open'], row['Close']))
     #     close_prices_array += row['Close']
     # print(isMonotonic(close_prices_array))
-
-
 
     pass
     # print("Day 1")
