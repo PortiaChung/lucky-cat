@@ -8,6 +8,13 @@ authors = ["tianru zhou <tianr.zhou@gmail.com>"]
 python = "^3.7"
 plotly = "^5.1.0"
 pyrh = "^2.0"
+sqlalchemy = "^1.4.23"
+SQLAlchemy-Utils = "^0.37.8"
+yfinance = "^0.1.63"
+configparser = "^5.0.2"
+PyMySQL = "^1.0.2"
+cryptography = "^35.0.0"
+alembic = "^1.7.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

@@ -13,19 +13,38 @@ from lucky_cat.analyzer.swallowext import SwallowExt
 from lucky_cat.common.utils.helper import isMonotonic, isMonotonicApproximate
 from lucky_cat.news.popular.popular import Popular
 
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import pandas as pd
+# from history.position.position import *
+# from history import session
 
-def plot(history: DataFrame):
-    fig = go.Figure(
-        data=[
-            go.Candlestick(
-                x=history.index,
-                open=history['Open'],
-                high=history['High'],
-                low=history['Low'],
-                close=history['Close']
-            )
-        ]
-    )
+def plot(stock_name, history: DataFrame):
+    fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
+                        vertical_spacing=0.03, subplot_titles=(stock_name, 'Volume'),
+                        row_width=[0.2, 0.7])
+
+    # fig = make_subplots(specs=[[{"secondary_y": True}]])
+    fig.add_trace(go.Candlestick(x=history.index,
+                                 open=history['Open'], high=history['High'],
+                                 low=history['Low'], close=history['Close'], name='Price'),
+                  row=1, col=1)
+
+    fig.add_trace(go.Bar(x=history.index, y=history["Volume"], showlegend=False),
+                  row=2, col=1)
+    # fig.layout.yaxis2.showgrid = False
+    # fig = go.Figure(
+    #     data=[
+    #         go.Candlestick(
+    #             x=history.index,
+    #             open=history['Open'],
+    #             high=history['High'],
+    #             low=history['Low'],
+    #             close=history['Close']
+    #         )
+    #     ]
+    # )
+    fig.update(layout_xaxis_rangeslider_visible=False)
     fig.show()
 
 def find_hammer_wire(rh_pop_list):
@@ -38,7 +57,7 @@ def find_hammer_wire(rh_pop_list):
             if hammerwire.is_up_hammer_wire(history) or hammerwire.is_down_hammer_wire(history):
                 print(pop)
                 # history = ticker.history()
-                plot(history)
+                plot(pop, history)
         except Exception as ex:
             print("Hammer wire, ticker: {}, exception: {}".format(pop, ex))
 
@@ -53,7 +72,7 @@ def find_swallow(rh_pop_list):
             history = ticker.history()
             if swallow.is_up_swallow(history) or swallow.is_down_swallow(history):
                 print(pop)
-                plot(history=history)
+                plot(pop, history)
         except Exception as ex:
             print("Swallow, ticker: {}, exception: {}".format(pop, ex))
 
@@ -67,14 +86,39 @@ def find_swallow_ext(rh_pop_list):
             history = ticker.history()
             # print(pop)
             if swallowext.is_up_swallowext(history) or swallowext.is_down_swallowext(history):
-                plot(history)
+                plot(pop, history)
                 print(pop)
         except Exception as ex:
             print("Swallow Ext, ticker: {}, exception: {}".format(pop, ex))
 
 
 def main():
+
+    # open_position = OpenPosition(type="stock", open_price=100.01)
+    # session.add(open_position)
+    # session.commit()
+
+    # print("here is the start of program")
+    # import pymysql.cursors
+    # connection = pymysql.connect(host='localhost',
+    #                              user='root',
+    #                              password='password',
+    #                              # database='db',
+    #                              cursorclass=pymysql.cursors.DictCursor)
+    # with connection:
+    #     with connection.cursor() as cursor:
+    #         # Create a new record
+    #         # sql = "INSERT INTO `users` (`email`, `password`) VALUES (%s, %s)"
+    #         # cursor.execute(sql, ('webmaster@python.org', 'very-secret'))
+    #         sql = "show databases"
+    #         results = cursor.execute(sql)
+    #         print(cursor.fetchall())
+
+
     rh_pop_list = Popular.get_robinhood_populars()
+
+    # print(yf.Ticker("AMD").history().iloc[-1])
+    # exit(0)
 
     find_hammer_wire(rh_pop_list)
     find_swallow(rh_pop_list)
