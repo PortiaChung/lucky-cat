@@ -6,7 +6,7 @@ authors = ["tianru zhou <tianr.zhou@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
-plotly = "^5.1.0"
+plotly = "^5.3.1"
 pyrh = "^2.0"
 sqlalchemy = "^1.4.23"
 SQLAlchemy-Utils = "^0.37.8"
@@ -14,7 +14,9 @@ yfinance = "^0.1.63"
 configparser = "^5.0.2"
 PyMySQL = "^1.0.2"
 cryptography = "^35.0.0"
-alembic = "^1.7.4"
+alembic = "1.6.0"
+abcplus = "^0.1.0"
+overrides = "^6.1.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

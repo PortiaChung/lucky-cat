@@ -1,6 +1,6 @@
 import unittest
 
-from lucky_cat.common.utils.helper import isMonotonicIncApproximate, isMonotonicDecApproximate
+from lucky_cat.common.utils.helper import isMonotonicIncApproximate, isMonotonicDecApproximate, isIncTrend, isDecTrend
 
 
 class MyTestCase(unittest.TestCase):
@@ -32,6 +32,16 @@ class MyTestCase(unittest.TestCase):
 
         A = [1.5, 1.4, 1.3, 1.2, 1.25]
         self.assertEqual(isMonotonicDecApproximate(A), False)
+
+    def test_isIncTrend(self):
+        A = [1.5, 1.6, 1.8, 2, 2.3, 2.25, 2.4, 2.6, 2.5, 2.7, 2.9]
+        self.assertEqual(isIncTrend(A, 0.2), True)
+        self.assertEqual(isIncTrend(A, 0.1), False)
+
+    def test_isDecTrend(self):
+        A = [20, 19, 18, 17, 17.2, 16, 15, 15.5, 16, 14.5, 14, 13]
+        self.assertEqual(isDecTrend(A, 0.2), False)
+        self.assertEqual(isDecTrend(A, 0.3), True)
 
 
 if __name__ == '__main__':

@@ -7,31 +7,43 @@ import plotly.graph_objects as go
 import pandas as pd
 import datetime
 
-from lucky_cat.analyzer.hammerwire import HammerWire
+from lucky_cat.analyzer.hammerline import HammerLine
+from lucky_cat.analyzer.hangline import HangLine
+from lucky_cat.analyzer.meteorline import MeteorLine
+from lucky_cat.analyzer.reversehammerline import ReverseHammerLine
 from lucky_cat.analyzer.swallow import Swallow
 from lucky_cat.analyzer.swallowext import SwallowExt
+from lucky_cat.analyzer.uphugline import UpHugLine
+from lucky_cat.analyzer.uppregnantline import UpPregnantLine
 from lucky_cat.common.utils.helper import isMonotonic, isMonotonicApproximate
 from lucky_cat.news.popular.popular import Popular
 
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import plotly.express as px
 import pandas as pd
+
+
 # from history.position.position import *
 # from history import session
 
 def plot(stock_name, history: DataFrame):
-    fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
+    fig = make_subplots(rows=1, cols=1, shared_xaxes=True,
                         vertical_spacing=0.03, subplot_titles=(stock_name, 'Volume'),
-                        row_width=[0.2, 0.7])
+                        row_width=[0.2], specs=[[{"secondary_y": True}]])
 
-    # fig = make_subplots(specs=[[{"secondary_y": True}]])
     fig.add_trace(go.Candlestick(x=history.index,
                                  open=history['Open'], high=history['High'],
-                                 low=history['Low'], close=history['Close'], name='Price'),
+                                 low=history['Low'], close=history['Close'], name='Price', opacity=0.5),
                   row=1, col=1)
 
-    fig.add_trace(go.Bar(x=history.index, y=history["Volume"], showlegend=False),
-                  row=2, col=1)
+    # color website: https://community.plotly.com/t/plotly-colours-list/11730
+    fig.add_trace(go.Bar(x=history.index, y=history["Volume"], showlegend=False, yaxis='y2', opacity=0.3,
+                         marker=dict(color='#17becf', colorscale='viridis')
+                         ),
+                  row=1, col=1, secondary_y=True)
+
+    # fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
     # fig.layout.yaxis2.showgrid = False
     # fig = go.Figure(
     #     data=[
@@ -47,19 +59,35 @@ def plot(stock_name, history: DataFrame):
     fig.update(layout_xaxis_rangeslider_visible=False)
     fig.show()
 
+
 def find_hammer_wire(rh_pop_list):
     print("######## Hammer Wire ########")
-    hammerwire = HammerWire(1 / 5, 3, 1 / 3)
+    # hammerwire = HammerWire(1 / 5, 3, 1 / 3)
+    hammerline = HammerLine(trend_days=5, outlier_ratio=0.3)
+    reversehammerline = ReverseHammerLine(trend_days=5, outlier_ratio=0.3)
+    meteorline = MeteorLine(trend_days=5)
+    hangline = HangLine(trend_days=5)
+    uphugline = UpHugLine(trend_days=5)
+    uppregnantline = UpPregnantLine(trend_days=5)
+    rh_pop_list = ["AAPL"]
+
     for pop in rh_pop_list:
         try:
             ticker = yf.Ticker(pop)
-            history = ticker.history()
-            if hammerwire.is_up_hammer_wire(history) or hammerwire.is_down_hammer_wire(history):
+            history = ticker.history(period="6mo")[:-10]
+            print("processing " + pop)
+            # if hammerwire.is_up_hammer_wire(history):
+            #     print(pop)
+            #     plot(pop, history)
+            # if hammerline.is_hammer_line(history):
+            #     print(pop)
+            #     plot(pop, history)
+            if uppregnantline.is_up_pregant_line(history):
                 print(pop)
-                # history = ticker.history()
                 plot(pop, history)
         except Exception as ex:
-            print("Hammer wire, ticker: {}, exception: {}".format(pop, ex))
+            print("Hammer Line, ticker: {}, exception: {}".format(pop, ex))
+
 
 def find_swallow(rh_pop_list):
     print("######## Swallow ########")
@@ -75,6 +103,7 @@ def find_swallow(rh_pop_list):
                 plot(pop, history)
         except Exception as ex:
             print("Swallow, ticker: {}, exception: {}".format(pop, ex))
+
 
 def find_swallow_ext(rh_pop_list):
     print("######## Swallow Ext ########")
@@ -93,7 +122,6 @@ def find_swallow_ext(rh_pop_list):
 
 
 def main():
-
     # open_position = OpenPosition(type="stock", open_price=100.01)
     # session.add(open_position)
     # session.commit()
@@ -114,15 +142,14 @@ def main():
     #         results = cursor.execute(sql)
     #         print(cursor.fetchall())
 
-
     rh_pop_list = Popular.get_robinhood_populars()
 
     # print(yf.Ticker("AMD").history().iloc[-1])
     # exit(0)
 
     find_hammer_wire(rh_pop_list)
-    find_swallow(rh_pop_list)
-    find_swallow_ext(rh_pop_list)
+    # find_swallow(rh_pop_list)
+    # find_swallow_ext(rh_pop_list)
 
     # # do history stats analysis
     # hammerwire = HammerWire(1 / 5, 3, 1 / 3)
