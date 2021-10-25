@@ -3,6 +3,7 @@ from pandas import DataFrame
 from lucky_cat.analyzer.basicanalyzer import BasicAnalyzer
 from overrides import overrides
 
+
 # volume requirement: must be much larger then recent average, the higher, the better
 class MeteorLine(BasicAnalyzer):
     def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3, head_to_hair: float = 1 / 2,
@@ -14,6 +15,7 @@ class MeteorLine(BasicAnalyzer):
 
         # params used to define inc / dec trend
         super().__init__(trend_days, outlier_ratio)
+        self.name = 'MeteorLine'
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:
@@ -33,4 +35,5 @@ class MeteorLine(BasicAnalyzer):
 
     @overrides
     def analyze(self, history: DataFrame) -> bool:
-        return self.isShapeDetected and self.incTrend(history) and self.isVolumeAmplifed(history, 1.2)
+        return self.isShapeDetected(history) and self.incTrend(history.tail(self.trend_days)) and self.isVolumeAmplifed(
+            history, 1.2)

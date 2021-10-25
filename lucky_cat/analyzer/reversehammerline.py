@@ -3,6 +3,7 @@ from pandas import DataFrame
 from lucky_cat.analyzer.basicanalyzer import BasicAnalyzer
 from overrides import overrides
 
+
 # warning level < hammer line
 # volume requirement: must be much larger then recent average, the higher, the better
 class ReverseHammerLine(BasicAnalyzer):
@@ -15,6 +16,7 @@ class ReverseHammerLine(BasicAnalyzer):
 
         # params used to define inc / dec trend
         super().__init__(trend_days, outlier_ratio)
+        self.name = 'ReverseHammerLine'
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:
@@ -34,4 +36,5 @@ class ReverseHammerLine(BasicAnalyzer):
 
     @overrides
     def analyze(self, history: DataFrame) -> bool:
-        return self.isShapeDetected(history) and self.decTrend(history) and self.isVolumeAmplifed(history, 1.2)
+        return self.isShapeDetected(history) and self.decTrend(history.tail(self.trend_days)) and self.isVolumeAmplifed(
+            history, 1.2)

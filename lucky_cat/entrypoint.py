@@ -7,14 +7,18 @@ import plotly.graph_objects as go
 import pandas as pd
 import datetime
 
+from lucky_cat.analyzer.downhugline import DownHugLine
+from lucky_cat.analyzer.downpregantline import DownPregantLine
+from lucky_cat.analyzer.downswallow import DownSwallow
+from lucky_cat.analyzer.downswallowext import DownSwallowExt
 from lucky_cat.analyzer.hammerline import HammerLine
 from lucky_cat.analyzer.hangline import HangLine
 from lucky_cat.analyzer.meteorline import MeteorLine
 from lucky_cat.analyzer.reversehammerline import ReverseHammerLine
-from lucky_cat.analyzer.swallow import Swallow
-from lucky_cat.analyzer.swallowext import SwallowExt
 from lucky_cat.analyzer.uphugline import UpHugLine
 from lucky_cat.analyzer.uppregnantline import UpPregnantLine
+from lucky_cat.analyzer.upswallow import UpSwallow
+from lucky_cat.analyzer.upswallowext import UpSwallowExt
 from lucky_cat.common.utils.helper import isMonotonic, isMonotonicApproximate
 from lucky_cat.news.popular.popular import Popular
 
@@ -62,31 +66,31 @@ def plot(stock_name, history: DataFrame):
 
 def find_hammer_wire(rh_pop_list):
     print("######## Hammer Wire ########")
-    # hammerwire = HammerWire(1 / 5, 3, 1 / 3)
-    hammerline = HammerLine(trend_days=5, outlier_ratio=0.3)
-    reversehammerline = ReverseHammerLine(trend_days=5, outlier_ratio=0.3)
-    meteorline = MeteorLine(trend_days=5)
-    hangline = HangLine(trend_days=5)
-    uphugline = UpHugLine(trend_days=5)
-    uppregnantline = UpPregnantLine(trend_days=5)
-    rh_pop_list = ["AAPL"]
-
-    for pop in rh_pop_list:
-        try:
-            ticker = yf.Ticker(pop)
-            history = ticker.history(period="6mo")[:-10]
-            print("processing " + pop)
-            # if hammerwire.is_up_hammer_wire(history):
-            #     print(pop)
-            #     plot(pop, history)
-            # if hammerline.is_hammer_line(history):
-            #     print(pop)
-            #     plot(pop, history)
-            if uppregnantline.is_up_pregant_line(history):
-                print(pop)
-                plot(pop, history)
-        except Exception as ex:
-            print("Hammer Line, ticker: {}, exception: {}".format(pop, ex))
+    # # hammerwire = HammerWire(1 / 5, 3, 1 / 3)
+    # hammerline = HammerLine(trend_days=5, outlier_ratio=0.3)
+    # reversehammerline = ReverseHammerLine(trend_days=5, outlier_ratio=0.3)
+    # meteorline = MeteorLine(trend_days=5)
+    # hangline = HangLine(trend_days=5)
+    # uphugline = UpHugLine(trend_days=5)
+    # uppregnantline = UpPregnantLine(trend_days=5)
+    # rh_pop_list = ["AAPL"]
+    #
+    # for pop in rh_pop_list:
+    #     try:
+    #         ticker = yf.Ticker(pop)
+    #         history = ticker.history(period="6mo")[:-10]
+    #         print("processing " + pop)
+    #         # if hammerwire.is_up_hammer_wire(history):
+    #         #     print(pop)
+    #         #     plot(pop, history)
+    #         # if hammerline.is_hammer_line(history):
+    #         #     print(pop)
+    #         #     plot(pop, history)
+    #         if uppregnantline.is_up_pregant_line(history):
+    #             print(pop)
+    #             plot(pop, history)
+    #     except Exception as ex:
+    #         print("Hammer Line, ticker: {}, exception: {}".format(pop, ex))
 
 
 def find_swallow(rh_pop_list):
@@ -143,11 +147,35 @@ def main():
     #         print(cursor.fetchall())
 
     rh_pop_list = Popular.get_robinhood_populars()
+    analyzers_list = [DownHugLine(5), DownPregantLine(5), DownSwallow(5), DownSwallowExt(5), HammerLine(5), HangLine(5),
+                     MeteorLine(5), ReverseHammerLine(5), UpHugLine(5), UpPregnantLine(5), UpSwallow(5), UpSwallowExt(5)]
+    for pop in rh_pop_list:
+        try:
+            ticker = yf.Ticker(pop)
+            history = ticker.history(period="6mo")
+            print("processing " + pop)
+            for analyzer in analyzers_list:
+                if analyzer.analyze(history):
+                    print(pop)
+                    print(analyzer.name)
+                    plot(pop, history)
+
+            # if hammerwire.is_up_hammer_wire(history):
+            #     print(pop)
+            #     plot(pop, history)
+            # if hammerline.is_hammer_line(history):
+            #     print(pop)
+            #     plot(pop, history)
+            # if uppregnantline.is_up_pregant_line(history):
+            #     print(pop)
+            #     plot(pop, history)
+        except Exception as ex:
+            print("Hammer Line, ticker: {}, exception: {}".format(pop, ex))
 
     # print(yf.Ticker("AMD").history().iloc[-1])
     # exit(0)
 
-    find_hammer_wire(rh_pop_list)
+    # find_hammer_wire(rh_pop_list)
     # find_swallow(rh_pop_list)
     # find_swallow_ext(rh_pop_list)
 

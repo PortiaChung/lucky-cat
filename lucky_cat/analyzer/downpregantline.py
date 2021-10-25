@@ -3,9 +3,11 @@ from pandas import DataFrame
 from lucky_cat.analyzer.basicanalyzer import BasicAnalyzer
 from overrides import overrides
 
+
 class DownPregantLine(BasicAnalyzer):
     def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3):
         super().__init__(trend_days, outlier_ratio)
+        self.name = 'DownPregantLine'
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:
@@ -23,4 +25,4 @@ class DownPregantLine(BasicAnalyzer):
 
     @overrides
     def analyze(self, history: DataFrame) -> bool:
-        return self.isShapeDetected and self.incTrend(history.iloc[:-1])
+        return self.isShapeDetected(history) and self.incTrend(history.iloc[:-1].tail(self.trend_days))

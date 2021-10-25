@@ -3,6 +3,7 @@ from pandas import DataFrame
 from lucky_cat.analyzer.basicanalyzer import BasicAnalyzer
 from overrides import overrides
 
+
 # 1. warning level < meteor line
 # 2. volume requirement: must be much larger then recent average, the higher, the better
 class HangLine(BasicAnalyzer):
@@ -15,6 +16,7 @@ class HangLine(BasicAnalyzer):
 
         # params used to define inc / dec trend
         super().__init__(trend_days, outlier_ratio)
+        self.name = 'HangLine'
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:
@@ -34,4 +36,5 @@ class HangLine(BasicAnalyzer):
 
     @overrides
     def analyze(self, history: DataFrame) -> bool:
-        return self.isShapeDetected(history) and self.incTrend(history) and self.isVolumeAmplifed(history, 1.2)
+        return self.isShapeDetected(history) and self.incTrend(history.tail(self.trend_days)) and self.isVolumeAmplifed(
+            history, 1.2)

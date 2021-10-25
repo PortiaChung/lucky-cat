@@ -3,6 +3,7 @@ from pandas import DataFrame
 from lucky_cat.analyzer.basicanalyzer import BasicAnalyzer
 from overrides import overrides
 
+
 # volume requirement: must be at least equal to recent average
 class HammerLine(BasicAnalyzer):
     def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3, hair_to_tail: float = 1 / 2,
@@ -14,6 +15,7 @@ class HammerLine(BasicAnalyzer):
 
         # params used to define inc / dec trend
         super().__init__(trend_days, outlier_ratio)
+        self.name = 'HammerLine'
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:
@@ -33,4 +35,5 @@ class HammerLine(BasicAnalyzer):
 
     @overrides
     def analyze(self, history: DataFrame) -> bool:
-        return self.isShapeDetected(history) and self.decTrend(history) and self.isVolumeAmplifed(history, 1.0)
+        return self.isShapeDetected(history) and self.decTrend(history.tail(self.trend_days)) and self.isVolumeAmplifed(
+            history, 1.0)
