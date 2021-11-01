@@ -11,7 +11,6 @@ engine = create_engine("mysql+pymysql://root:password@localhost:3306/transaction
 if not database_exists(engine.url):
     create_database(engine.url)
 
-Session = sessionmaker(bind=engine)
-session = Session(expire_on_commit=True)
+Session = sessionmaker(bind=engine, expire_on_commit=True)
 
 base.Base.metadata.create_all(engine)

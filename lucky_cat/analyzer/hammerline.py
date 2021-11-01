@@ -7,15 +7,14 @@ from overrides import overrides
 # volume requirement: must be at least equal to recent average
 class HammerLine(BasicAnalyzer):
     def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3, hair_to_tail: float = 1 / 2,
-                 head_to_tail: float = 1 / 2):
+                 head_to_tail: float = 1 / 4):
         # condition 1: (high - max(open, close)) / (min(open, close) - low) < hair_to_tail
         self.hair_to_tail = hair_to_tail
         # condition 2: abs(open - close) / (min(open, close) - low) < head_to_tail
         self.head_to_tail = head_to_tail
 
         # params used to define inc / dec trend
-        super().__init__(trend_days, outlier_ratio)
-        self.name = 'HammerLine'
+        super().__init__(trend_days, outlier_ratio, 'HammerLine')
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:

@@ -1,8 +1,8 @@
-"""transaction tables schema v1
+"""finalize schemas
 
-Revision ID: e49ce8e4fe81
+Revision ID: 1fd9ad707588
 Revises: 
-Create Date: 2021-10-16 22:29:52.701495
+Create Date: 2021-10-31 18:56:04.079049
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e49ce8e4fe81'
+revision = '1fd9ad707588'
 down_revision = None
 branch_labels = None
 depends_on = None

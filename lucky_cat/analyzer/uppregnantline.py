@@ -6,8 +6,7 @@ from overrides import overrides
 
 class UpPregnantLine(BasicAnalyzer):
     def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3):
-        super().__init__(trend_days, outlier_ratio)
-        self.name = 'UpPregantLine'
+        super().__init__(trend_days, outlier_ratio, 'UpPregantLine')
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:
@@ -21,7 +20,7 @@ class UpPregnantLine(BasicAnalyzer):
             return False
         if not (yesterday['Open'] > today['Close'] and yesterday['Close'] < today['Open']):
             return False
-        if (today['Close'] - today['Open']) / (today['High'] - today['Low']) > 1 / 3:
+        if (today['Close'] - today['Open']) / (today['High'] - today['Low']) > 1 / 4:
             return False
         return True
 

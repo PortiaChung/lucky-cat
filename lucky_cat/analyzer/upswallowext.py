@@ -6,9 +6,8 @@ from overrides import overrides
 
 class UpSwallowExt(BasicAnalyzer):
     def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3, penetrate_depth: float = 2 / 3):
-        super().__init__(trend_days, outlier_ratio)
+        super().__init__(trend_days, outlier_ratio, 'UpSwallowExt')
         self.penetrate_depth = penetrate_depth
-        self.name = 'UpSwallowExt'
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:

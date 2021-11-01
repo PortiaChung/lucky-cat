@@ -7,7 +7,7 @@ from overrides import overrides
 # warning level < hammer line
 # volume requirement: must be much larger then recent average, the higher, the better
 class ReverseHammerLine(BasicAnalyzer):
-    def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3, head_to_hair: float = 1 / 2,
+    def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3, head_to_hair: float = 1 / 4,
                  tail_to_hair: float = 1 / 2):
         # condition 1: abs(open - close) / (high - max(open, close)) < head_to_hair
         self.head_to_hair = head_to_hair
@@ -15,8 +15,7 @@ class ReverseHammerLine(BasicAnalyzer):
         self.tail_to_hair = tail_to_hair
 
         # params used to define inc / dec trend
-        super().__init__(trend_days, outlier_ratio)
-        self.name = 'ReverseHammerLine'
+        super().__init__(trend_days, outlier_ratio, 'ReverseHammerLine')
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:

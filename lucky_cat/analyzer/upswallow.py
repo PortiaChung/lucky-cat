@@ -5,8 +5,7 @@ from overrides import overrides
 
 class UpSwallow(BasicAnalyzer):
     def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3):
-        super().__init__(trend_days, outlier_ratio)
-        self.name = 'UpSwallow'
+        super().__init__(trend_days, outlier_ratio, 'UpSwallow')
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:
@@ -34,4 +33,4 @@ class UpSwallow(BasicAnalyzer):
     @overrides
     def analyze(self, history: DataFrame) -> bool:
         return self.isShapeDetected(history) and self.decTrend(
-            history[:-1].tail(self.trend_days)) and self.isVolumeAmplifed(history, 1.2)
+            history[:-1].tail(self.trend_days)) and self.isVolumeAmplifed(history, 1.5)

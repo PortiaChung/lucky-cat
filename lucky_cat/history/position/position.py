@@ -19,19 +19,20 @@ class Transactions(base.Base):
     closeDate = Column('close_date', DATETIME(timezone=True), server_default=func.now())
     # category = Column('category', Enum(TransactionType))
     ticker = Column('ticker', String(32))
+    type = Column('type', Enum(TransactionType))
     open = Column('open', Boolean, default=True)
     earning = Column('earning', DECIMAL(18, 2), default=0)
     earning_percent = Column('earning_percent', DECIMAL(18, 2), default=0)
 
-    stockPositions = relationship('StockPositions', cascade="all,delete", backref='transactions')
-    optionPositions = relationship('OptionPositions', cascade="all,delete", backref='transactions')
+    stockPositions = relationship('StockPositions', passive_deletes=True, backref='transactions')
+    optionPositions = relationship('OptionPositions', passive_deletes=True, backref='transactions')
 
 class StockPositions(base.Base):
     __tablename__ = 'stock_positions'
     __table_args__ = {'extend_existing': True}
 
     id = Column('id', Integer, primary_key=True)
-    transactionId = Column('transaction_id', Integer, ForeignKey('transactions.id'))
+    transactionId = Column('transaction_id', Integer, ForeignKey('transactions.id', ondelete='CASCADE'))
 
     openPrice = Column('open_price', DECIMAL(18, 2))
     shares = Column('shares', Integer)
@@ -48,7 +49,7 @@ class OptionPositions(base.Base):
     __table_args__ = {'extend_existing': True}
 
     id = Column('id', Integer, primary_key=True)
-    transactionId = Column('transaction_id', Integer, ForeignKey('transactions.id'))
+    transactionId = Column('transaction_id', Integer, ForeignKey('transactions.id', ondelete='CASCADE'))
 
     # optionType = Column('option_type', Enum(OptionType))
     openCashflow = Column('open_cashflow', DECIMAL(18, 2))

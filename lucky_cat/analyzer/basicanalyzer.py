@@ -1,3 +1,4 @@
+import string
 from pandas import DataFrame
 from abc import abstractmethod
 
@@ -6,9 +7,13 @@ from lucky_cat.common.utils.helper import isIncTrend, isDecTrend
 
 class BasicAnalyzer:
     # trend_days & outlier_ratio are necessary for all analyzers
-    def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3):
+    def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3, name: string = 'BasicAnalyzer', upward: bool = True):
         self.trend_days = trend_days
         self.outlier_ratio = outlier_ratio
+        self.name = name
+        # upward means price will stop decreasing or start increasing
+        # else means price will stop increasing or start decreasing
+        self.upward = upward
 
     def incTrend(self, trend_df: DataFrame) -> bool:
         history_close_prices = []

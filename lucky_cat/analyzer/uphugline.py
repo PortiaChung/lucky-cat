@@ -6,8 +6,7 @@ from overrides import overrides
 
 class UpHugLine(BasicAnalyzer):
     def __init__(self, trend_days: int = 10, outlier_ratio: float = 0.3):
-        super().__init__(trend_days, outlier_ratio)
-        self.name = 'UpHugLine'
+        super().__init__(trend_days, outlier_ratio, 'UpHugLine')
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:
