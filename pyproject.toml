@@ -17,6 +17,7 @@ cryptography = "^35.0.0"
 alembic = "1.6.0"
 abcplus = "^0.1.0"
 overrides = "^6.1.0"
+pandas-datareader = "^0.10.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

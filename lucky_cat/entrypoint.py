@@ -128,6 +128,9 @@ def main():
     # 3. MeteorLine
     # analyzers_list = [DownSwallow(trend_days)]
 
+    tt = yf.Ticker('MSFT')
+    print(tt.info['marketCap'])
+"""
     simpleHistoryPredictor = SimpleHistoryPredictor()
     # rh_pop_list = ['MSFT']
 
@@ -150,6 +153,8 @@ def main():
                 # print(simpleHistoryPredictor.predict(history, analyzer))
         except Exception as ex:
             print("Hammer Line, ticker: {}, exception: {}".format(pop, ex))
+
+"""
 
     # history = yf.Ticker("AMD").history()
     # dates = []
@@ -207,7 +212,7 @@ def main():
     #     close_prices_array += row['Close']
     # print(isMonotonic(close_prices_array))
 
-    pass
+    # pass
     # print("Day 1")
     # msft = yf.Ticker("MSFT")
     # # print(msft.info)
