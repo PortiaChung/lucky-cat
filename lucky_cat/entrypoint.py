@@ -115,7 +115,7 @@ def main():
     #         results = cursor.execute(sql)
     #         print(cursor.fetchall())
 
-    rh_pop_list = Popular.get_robinhood_populars()
+    rh_pop_list = Popular.get_nasdaq_100_company_list()
     trend_days = 10
     analyzers_list = [DownHugLine(trend_days), DownPregantLine(trend_days), DownSwallow(trend_days),
                       DownSwallowExt(trend_days), HammerLine(trend_days), HangLine(trend_days),
@@ -128,9 +128,6 @@ def main():
     # 3. MeteorLine
     # analyzers_list = [DownSwallow(trend_days)]
 
-    tt = yf.Ticker('MSFT')
-    print(tt.info['marketCap'])
-"""
     simpleHistoryPredictor = SimpleHistoryPredictor()
     # rh_pop_list = ['MSFT']
 
@@ -154,7 +151,6 @@ def main():
         except Exception as ex:
             print("Hammer Line, ticker: {}, exception: {}".format(pop, ex))
 
-"""
 
     # history = yf.Ticker("AMD").history()
     # dates = []

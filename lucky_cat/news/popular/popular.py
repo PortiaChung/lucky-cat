@@ -5,18 +5,20 @@ import os.path
 import requests
 from pandas_datareader import data
 
+from lucky_cat.news.popular import package_directory
+
 
 class Popular:
-    SP500File = 'generated/sp500list'
-    NASDAQ100File = 'generated/nasdaq100list'
-    DOW30File = 'generated/dow30list'
+    SP500File = '{}/generated/sp500list'.format(package_directory)
+    NASDAQ100File = '{}/generated/nasdaq100list'.format(package_directory)
+    DOW30File = '{}/generated/dow30list'.format(package_directory)
 
     def __init__(self):
         pass
 
     @staticmethod
     def get_nasdaq_100_company_list():
-        Popular.get_company_list(Popular.NASDAQ100File)
+        return Popular.get_company_list(Popular.NASDAQ100File)
 
     @staticmethod
     def get_sp_500_company_list():
@@ -116,8 +118,10 @@ class Popular:
 def main():
     # Test company list generation and sorting
     print(Popular.get_sp_500_company_list())
-    print(Popular.get_nasdaq_100_company_list())
-    print(Popular.get_dow_30_company_list())
+    # print(Popular.get_nasdaq_100_company_list())
+    # print(Popular.get_dow_30_company_list())
+    print(package_directory)
+    pass
 
 
 if __name__ == "__main__":
