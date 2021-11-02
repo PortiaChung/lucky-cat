@@ -49,7 +49,19 @@ def main():
 
     rsi = RSI(history).calculate(14)
     fig.add_trace(go.Scatter(x=rsi['Date'], y=rsi['Indices'], name='rsi'))
+    fig.update_layout(margin=dict(l=20, r=20, t=20, b=60), paper_bgcolor="LightSteelBlue")
+    fig.add_annotation(dict(font=dict(color='LightSteelBlue', size=30),
+                            x=0,
+                            y=0,
+                            showarrow=False,
+                            text="first line<br>second line<br>third line",
+                            textangle=0,
+                            xanchor='left',
+                            xref="paper",
+                            yref="paper"))
+
     fig.show()
+
 
 if __name__ == "__main__":
     main()

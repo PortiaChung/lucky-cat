@@ -1,6 +1,6 @@
 import datetime
 from pandas import DataFrame
-
+import statistics
 
 class BollingerBands:
     def __init__(self, history: DataFrame):
@@ -25,11 +25,12 @@ class BollingerBands:
             for j in range(i - len + 1, i + 1):
                 range_sum += close_prices[j]
             avg_price = range_sum * 1.0 / len
-            variance = 0
-            for j in range(i - len + 1, i + 1):
-                variance += pow(close_prices[j] - avg_price, 2)
-            down_prices.append(avg_price - 2 * variance ** (1/2))
-            up_prices.append(avg_price + 2 * variance ** (1/2))
+            # variance = 0
+            # for j in range(i - len + 1, i + 1):
+            #     variance += pow(close_prices[j] - avg_price, 2)
+            std = statistics.stdev(close_prices[i - len + 1:i + 1])
+            down_prices.append(avg_price - 2 * std)
+            up_prices.append(avg_price + 2 * std)
             prices.append(avg_price)
         result = DataFrame()
         result['Date'] = readable_dates

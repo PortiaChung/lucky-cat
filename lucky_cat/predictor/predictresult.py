@@ -1,5 +1,10 @@
+import string
+
+
 class PredictResult:
-    def __init__(self, total_hits: int, oscillate_points: list, meet_points: list, violate_points: list):
+    def __init__(self, shape_name: string, total_hits: int, oscillate_points: list, meet_points: list,
+                 violate_points: list):
+        self.shape_name = shape_name
         self.total_hits = total_hits
         self.oscillate_points = oscillate_points
         self.meet_points = meet_points
@@ -17,6 +22,6 @@ class PredictResult:
 
         # print("Meet Date: {}\n".format(self.meet_points))
         # print("Oscillate Date: {}\n".format(self.oscillate_points))
-        # print("Violate Date: {}\n".format(self.violate_points))
-        return "Total hits: {}\nOscillate possibility: {:.2f}\nMeet possibility: {:.2f}\nViolate possibility: {:.2f}\n".format(
-                self.total_hits, oscillate_possibility, meet_possibility, violate_possibility)
+        print("Violate Date: {}\n".format(self.violate_points))
+        return "Shape_name: {}\nTotal hits: {}\nOscillate possibility: {:.2f}\nMeet possibility: {:.2f}\nViolate possibility: {:.2f}\n".format(
+            self.shape_name, self.total_hits, oscillate_possibility, meet_possibility, violate_possibility)

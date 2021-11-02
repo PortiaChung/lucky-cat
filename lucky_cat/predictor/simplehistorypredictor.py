@@ -61,4 +61,4 @@ class SimpleHistoryPredictor(BasePredictor):
                     else:
                         violate_points.append(anchor_point_date)
 
-        return PredictResult(occurence, oscillate_points, meet_points, violate_points)
+        return PredictResult(analyzer.name, occurence, oscillate_points, meet_points, violate_points)

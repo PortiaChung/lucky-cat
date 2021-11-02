@@ -30,6 +30,7 @@ import pandas as pd
 # from history.position.position import *
 # from history import session
 from lucky_cat.predictor.simplehistorypredictor import SimpleHistoryPredictor
+from lucky_cat.visualizer.simple_history_visualizer import SimpleHistoryVisualizer
 
 
 def plot(stock_name, history: DataFrame):
@@ -47,6 +48,7 @@ def plot(stock_name, history: DataFrame):
                          marker=dict(color='#17becf', colorscale='viridis')
                          ),
                   row=1, col=1, secondary_y=True)
+
 
     # fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
     # fig.layout.yaxis2.showgrid = False
@@ -115,41 +117,49 @@ def main():
     #         results = cursor.execute(sql)
     #         print(cursor.fetchall())
 
-    rh_pop_list = Popular.get_nasdaq_100_company_list()
+    # symbols_list = Popular.get_sp_500_company_list()[:200]
+    symbols_list = ['NFLX']
     trend_days = 10
     analyzers_list = [DownHugLine(trend_days), DownPregantLine(trend_days), DownSwallow(trend_days),
                       DownSwallowExt(trend_days), HammerLine(trend_days), HangLine(trend_days),
                       MeteorLine(trend_days), ReverseHammerLine(trend_days), UpHugLine(trend_days),
                       UpPregnantLine(trend_days), UpSwallow(trend_days), UpSwallowExt(trend_days)]
-
-    # Tuned indicator:
-    # 1. UpPregnantLine
-    # 2. UpHugLine(trend_days) (few)
-    # 3. MeteorLine
-    # analyzers_list = [DownSwallow(trend_days)]
-
     simpleHistoryPredictor = SimpleHistoryPredictor()
-    # rh_pop_list = ['MSFT']
+    simpleHistoryVisualizer = SimpleHistoryVisualizer()
+    for symbol in symbols_list:
+        ticker = yf.Ticker(symbol)
+        history = ticker.history(period="5y")
+        dates = []
+        for index, row in history.iterrows():
+            dates.append(index)
+        history['Date'] = dates
+        for analyzer in analyzers_list:
+            if analyzer.analyze(history):
+                print(symbol)
+                predictResult = simpleHistoryPredictor.predict(history, analyzer)
+                simpleHistoryVisualizer.visualize(symbol, history, predictResult)
+                pass
 
-    for pop in rh_pop_list:
-        try:
-            ticker = yf.Ticker(pop)
-            history = ticker.history(period="max")
-            dates = []
-            for index, row in history.iterrows():
-                dates.append(index)
-            history['Date'] = dates
-            print("processing " + pop)
-            for analyzer in analyzers_list:
-                if analyzer.analyze(history):
-                    print(pop)
-                    print(analyzer.name)
-                    print(simpleHistoryPredictor.predict(history, analyzer))
-                    plot(pop, history.tail(180))
-                # print(analyzer.name)
-                # print(simpleHistoryPredictor.predict(history, analyzer))
-        except Exception as ex:
-            print("Hammer Line, ticker: {}, exception: {}".format(pop, ex))
+
+    # for pop in rh_pop_list:
+    #     try:
+    #         ticker = yf.Ticker(pop)
+    #         history = ticker.history(period="5y")
+    #         dates = []
+    #         for index, row in history.iterrows():
+    #             dates.append(index)
+    #         history['Date'] = dates
+    #         print("processing " + pop)
+    #         for analyzer in analyzers_list:
+    #             if analyzer.analyze(history):
+    #                 print(pop)
+    #                 print(analyzer.name)
+    #                 print(simpleHistoryPredictor.predict(history, analyzer))
+    #                 plot(pop, history.tail(180))
+    #             # print(analyzer.name)
+    #             # print(simpleHistoryPredictor.predict(history, analyzer))
+    #     except Exception as ex:
+    #         print("Hammer Line, ticker: {}, exception: {}".format(pop, ex))
 
 
     # history = yf.Ticker("AMD").history()
