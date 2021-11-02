@@ -14,7 +14,7 @@ class MeteorLine(BasicAnalyzer):
         self.tail_to_hair = tail_to_hair
 
         # params used to define inc / dec trend
-        super().__init__(trend_days, outlier_ratio, 'MeteorLine')
+        super().__init__(trend_days, outlier_ratio, 'MeteorLine', upward=False)
 
     @overrides
     def isShapeDetected(self, history: DataFrame) -> bool:
