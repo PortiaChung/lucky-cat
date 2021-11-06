@@ -18,6 +18,8 @@ alembic = "1.6.0"
 abcplus = "^0.1.0"
 overrides = "^6.1.0"
 pandas-datareader = "^0.10.0"
+html5lib = "^1.1"
+bs4 = "^0.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

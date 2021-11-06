@@ -17,7 +17,7 @@ from lucky_cat.visualizer.simple_history_visualizer import SimpleHistoryVisualiz
 
 
 def main():
-    symbols_list = Popular.get_sp_500_company_list()[200:]
+    symbols_list = Popular.get_nasdaq_100_company_list()
     trend_days = 10
     analyzers_list = [DownHugLine(trend_days), DownPregantLine(trend_days), DownSwallow(trend_days),
                       DownSwallowExt(trend_days), HammerLine(trend_days), HangLine(trend_days),
