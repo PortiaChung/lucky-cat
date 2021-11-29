@@ -12,6 +12,7 @@ class TimeRange(Enum):
     hour = 2
     day = 3
 
+# This data loader can only be used to load at most 2000 data points
 class DataLoader:
     def __init__(self):
         self.source_map = {

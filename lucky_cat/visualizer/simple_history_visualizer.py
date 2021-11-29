@@ -22,7 +22,7 @@ class SimpleHistoryVisualizer:
                             row_width=[0.1, 0.1, 0.1, 0.7])
 
         candleStickDF = history.tail(self.period)
-        fig.add_trace(go.Candlestick(x=candleStickDF.index,
+        fig.add_trace(go.Candlestick(x=candleStickDF['Date'],
                                      open=candleStickDF['Open'], high=candleStickDF['High'],
                                      low=candleStickDF['Low'], close=candleStickDF['Close'], name='CandleStick',
                                      opacity=1),
@@ -35,7 +35,7 @@ class SimpleHistoryVisualizer:
                       col=1)
 
         # color website: https://community.plotly.com/t/plotly-colours-list/11730
-        fig.add_trace(go.Bar(x=candleStickDF.index, y=candleStickDF["Volume"], showlegend=False, yaxis='y2', opacity=1,
+        fig.add_trace(go.Bar(x=candleStickDF['Date'], y=candleStickDF["Volume"], showlegend=False, yaxis='y2', opacity=1,
                              marker=dict(color='#17becf', colorscale='viridis')
                              ),
                       row=2, col=1)

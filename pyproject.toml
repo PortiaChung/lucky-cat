@@ -20,6 +20,8 @@ overrides = "^6.1.0"
 pandas-datareader = "^0.10.0"
 html5lib = "^1.1"
 bs4 = "^0.0.1"
+bitfinex-tencars = "^0.0.3"
+matplotlib = "^3.4.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
